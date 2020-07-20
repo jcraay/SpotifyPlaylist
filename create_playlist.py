@@ -145,14 +145,14 @@ class CreatePlaylist:
 
         query= "http://api.spotify.com/v1/playlists/{}/tracks".format(playlist_id)
 
-        response = requests.post {
+        response = requests.post(
             query,
             data =request_data,
                 headers= {
                     "Content-Type" : "application/json",
                     "Authorization" : "Bearer {}".format(self.spotify_token)
             }
-        } 
+        )
         response_json = response.json()
         return response.json()
         }
