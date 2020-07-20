@@ -155,5 +155,3 @@ class CreatePlaylist:
         )
         response_json = response.json()
         return response.json()
-        }
-         
