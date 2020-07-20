@@ -128,32 +128,32 @@ class CreatePlaylist:
 
    #STEP 5: add song into album.  #perfect function
         # Putting the project together 
-     def add_song_to_playlist(self):
+    def add_song_to_playlist(self):
          #populate our songs dictionary
         self.get_liked_videos()
 
          #collect all of uris
-         uris=[]
-            for song, in self.all_song_info.items():
-                uris.append(info["spotify_uri"])
+        uris=[]
+        for song, in self.all_song_info.items():
+            uris.append(info["spotify_uri"])
 
          #create a new playlist 
-            playlist_id = self.create_playlist()
+        playlist_id = self.create_playlist()
 
          # add all songs into new playlist
-            request_data = json.dumps(uris)
+        request_data = json.dumps(uris)
 
-            query= "http://api.spotify.com/v1/playlists/{}/tracks".format(playlist_id)
+        query= "http://api.spotify.com/v1/playlists/{}/tracks".format(playlist_id)
 
-            response = requests.post {
-                query,
-                data =request_data,
-                  headers= {
-                        "Content-Type" : "application/json",
-                        "Authorization" : "Bearer {}".format(self.spotify_token)
-                }
-            } 
-            response_json = response.json()
-            return response.json()
+        response = requests.post {
+            query,
+            data =request_data,
+                headers= {
+                    "Content-Type" : "application/json",
+                    "Authorization" : "Bearer {}".format(self.spotify_token)
             }
+        } 
+        response_json = response.json()
+        return response.json()
+        }
          
