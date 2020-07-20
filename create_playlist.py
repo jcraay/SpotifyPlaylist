@@ -104,7 +104,7 @@ class CreatePlaylist:
    # Output - 
     def get_spotfit_url(self, song_name, artist):   #rad the & as actual 'and'. I set it so only search for 20 songs (max)
        
-        query = https://api.spotify.com/v1/search?query=track%3A{}+artist%3A{}&type=track&offset=0&limit=20.format(
+        query = "https://api.spotify.com/v1/search?query=track%3A{}+artist%3A{}&type=track&offset=0&limit=20".format(
             song_name,
             artist,
         )
