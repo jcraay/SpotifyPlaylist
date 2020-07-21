@@ -1,28 +1,23 @@
-# step 1 sign into youtube
-# step 2 create a new playlist album
-# step 3 grab like song on youtube 
-# step 4 search for song
-# step 5 add song into album
-
 # PYTHON IS AN INTERPRETTED LANGUAGE (COMPILE BUTTON) AND OBJECT ORIENTED. 
 
-import json # format for storing and transporting data.  A key and value data format to transfer data
-import requests  # an HTTP library  (communication from user to code)
-import os
+import json # format for storing and transporting data.  A key and value data format to transfer data (part of python)
+import os  #(part of python)
 
+import google_auth_oauthlib.flow
+import googleapiclient.discovery    #youtube APIv3
+import googleapiclient.errors
+import requests  # an HTTP library  (communication from user to code) (not part of python)
+import youtube_dl
 
 from secret import spotify_user_id,spotify_token  #takes the variable we want from secret file
-import google_auth_oauthlib.flow
-import googleapiclient.discovery
-import googleapiclient.errors
-import youtube_dl
  
 class CreatePlaylist:
     
-    def _init_(self):
+    
+    def __init__(self):  #why 2 underscores?
         self.user_id= spotify_user_id # takes the username in our secret file 
         self.spotify_token = spotify_token
-        self.get_youtube_client = self.get_youtube_client()
+        self.youtube_client = self.get_youtube_client()
         self.all_song_info = {}
 
    #STEP 1: Sign into youtube  #Perfect
@@ -34,25 +29,27 @@ class CreatePlaylist:
 
         api_service_name = "youtube"
         api_version = "v3"
-        client_secrets_file = "client_secret.json"
+        client_secrets_file = "client_secret.json"  # this is MY special id number
 
         # Get credentials and create an API client
         scopes = ["https://www.googleapis.com/auth/youtube.readonly"] 
-        flow = google_auth_oauthlib.flow.InstalledAppFlow.from_client_secrets_file(client_secrets_file, scopes)
+        flow = google_auth_oauthlib.flow.InstalledAppFlow.from_client_secrets_file(
+        client_secrets_file, scopes)
         credentials = flow.run_console()
 
-        # From YOUTUBE_API
+        # passing on all the info to know I have permission. 
         youtube_client = googleapiclient.discovery.build(api_service_name, api_version, credentials=credentials)
 
         return youtube_client
 
+
    #STEP 2: grab like song on youtube // and create a dictionary of important song info 
-    def get_liked_videos(self):  #Perfect
-        request = self.youtube_client.videos().list(
-            part ="snippet,contentDetails,statistics",
-            myRating = "like"
+    def get_liked_videos(self):  
+        request =self.youtube_client.videos().list(
+            part="snippet,contentDetails,statistics",
+            myRating ="like"
         )
-        response =request.execute
+        response =request.execute()
 
          # collect each video and get important info #loops through all song called item
         for item in response ["items"]:
@@ -74,6 +71,7 @@ class CreatePlaylist:
                 #add the uri, easy to get song to put into Playlist
                 "spotify_uri":self.get_spotify_uri(song_name,artist) #call the function we wrote 
             }
+
 
    #STEP 3: create a new playlist album  // Perfect function
     def create_playlist (self):
@@ -99,19 +97,19 @@ class CreatePlaylist:
         #playlist id -- so we know where to save song to which playlist. 
         return response_json["id"]
 
+
    #STEP 4: search for song  //should be perfect if not its bc of query.
    # Input - 
    # Output - 
-    def get_spotfit_url(self, song_name, artist):   #rad the & as actual 'and'. I set it so only search for 20 songs (max)
+    def get_spotify_uri(self, song_name, artist):   #rad the & as actual 'and'. I set it so only search for 20 songs (max)
        
-        query = https://api.spotify.com/v1/search?query=track%3A{}+artist%3A{}&type=track&offset=0&limit=20.format(
+        query = "https://api.spotify.com/v1/search?query=track%3A{}+artist%3A{}&type=track&offset=0&limit=20".format(    #NOT RIGHT
             song_name,
-            artist,
+            artist
         )
-        #get users artist and song name
-        response = requests.get(   #get is the http method given in API
+        response = requests.get(   
             query,
-            headers = {
+            headers={
                 "Content-Type": "application/json",  
                 "Authorization": "Bearer {}".format(spotify_token)
             }
@@ -123,37 +121,37 @@ class CreatePlaylist:
         uri = songs[0]["uri"]
 
         return uri # the specific song to add to album.
- 
-        
+    
 
    #STEP 5: add song into album.  #perfect function
-        # Putting the project together 
-     def add_song_to_playlist(self):
-         #populate our songs dictionary
+    # Putting the project together 
+    def add_song_to_playlist(self):
+        #populate our songs dictionary
         self.get_liked_videos()
+ 
+        #get all of uris
+        uris=[info["spotify_uri"]
+            for song, info in self.all_song_info.items()]
 
-         #collect all of uris
-         uris=[]
-            for song, in self.all_song_info.items():
-                uris.append(info["spotify_uri"])
+        #create a new playlist 
+        playlist_id = self.create_playlist()
+ 
+        # add all songs into new playlist
+        request_data = json.dumps(uris)
 
-         #create a new playlist 
-            playlist_id = self.create_playlist()
+        query="https://api.spotify.com/v1/playlists/{}/tracks".format(playlist_id)
 
-         # add all songs into new playlist
-            request_data = json.dumps(uris)
-
-            query= "http://api.spotify.com/v1/playlists/{}/tracks".format(playlist_id)
-
-            response = requests.post {
-                query,
-                data =request_data,
-                  headers= {
-                        "Content-Type" : "application/json",
-                        "Authorization" : "Bearer {}".format(self.spotify_token)
-                }
-            } 
-            response_json = response.json()
-            return response.json()
+        response = requests.post(
+            query,
+            data =request_data,
+            headers= {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer {}".format(spotify_token)
             }
-         
+        ) 
+        response_json = response.json()
+        return response_json
+        
+if __name__ == '__main__':
+    cp = CreatePlaylist()
+    cp.add_song_to_playlist() 
