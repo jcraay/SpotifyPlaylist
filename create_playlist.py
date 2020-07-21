@@ -83,7 +83,7 @@ class CreatePlaylist:
                 "spotify_uri": self.get_spotify_uri(song_name, artist)
             }
 
-   # STEP 3: create a new playlist album  // Perfect function
+    # STEP 3: create a new playlist album  // Perfect function
     def create_playlist(self):
         # given information from site
         request_body = json.dumps({
@@ -92,7 +92,7 @@ class CreatePlaylist:
             "public": True
         })
 
-        #endpoint (query)
+        # endpoint (query)
         query = "https://api.spotify.com/v1/users/{}/playlists".format(
             self.user_id)
         response = requests.post(
@@ -108,9 +108,9 @@ class CreatePlaylist:
         # playlist id -- so we know where to save song to which playlist.
         return response_json["id"]
 
-   # STEP 4: search for song  //should be perfect if not its bc of query.
-   # Input -
-   # Output -
+    # STEP 4: search for song  //should be perfect if not its bc of query.
+    # Input -
+    # Output -
     # rad the & as actual 'and'. I set it so only search for 20 songs (max)
     def get_spotfit_url(self, song_name, artist):
 
@@ -135,8 +135,8 @@ class CreatePlaylist:
 
         return uri  # the specific song to add to album.
 
-   # STEP 5: add song into album.  #perfect function
-        # Putting the project together
+    # STEP 5: add song into album.  #perfect function
+    # Putting the project together
 
     def add_song_to_playlist(self):
         # populate our songs dictionary
@@ -147,7 +147,7 @@ class CreatePlaylist:
         for song, in self.all_song_info.items():
             uris.append(info["spotify_uri"])
 
-         # create a new playlist
+        # create a new playlist
         playlist_id = self.create_playlist()
 
         # add all songs into new playlist
