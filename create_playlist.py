@@ -27,7 +27,7 @@ class CreatePlaylist:
         self.get_youtube_client = self.get_youtube_client()
         self.all_song_info = {}
 
-   # STEP 1: Sign into youtube  #Perfect
+    # STEP 1: Sign into youtube  #Perfect
     def get_youtube_client(self):
         # COPIED FROM YOUTUE DATA API
         # Disable OAuthlib's HTTPS verification when running locally.
@@ -50,7 +50,7 @@ class CreatePlaylist:
 
         return youtube_client
 
-   # STEP 2: grab like song on youtube // and create a dictionary of important song info
+    # STEP 2: grab like song on youtube // and create a dictionary of important song info
     def get_liked_videos(self):  # Perfect
         request = self.youtube_client.videos().list(
             part="snippet,contentDetails,statistics",
