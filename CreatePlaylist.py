@@ -32,9 +32,13 @@ class CreatePlaylist:
 
         api_service_name = "youtube"
         api_version = "v3"
-        client_secrets_file = "client_secret.json"  # this is MY special id number
+        # this is MY special info file to give me access to the goods.
+        client_secrets_file = "client_secret.json"
 
-        # Get credentials and create an API client
+        # “unverified,” it has not fully completed the OAuth app verification.
+        # When your app is successfully verified, the unverified app screen is removed from your client.
+        # Get credentials and create an API client      #There is something wrong starting here. with scope.
+        # youtube data API is examples of sensitive scopes are some of the scopes
         scopes = ["https://www.googleapis.com/auth/youtube.readonly"]
         flow = google_auth_oauthlib.flow.InstalledAppFlow.from_client_secrets_file(
             client_secrets_file, scopes)
@@ -56,7 +60,7 @@ class CreatePlaylist:
 
         # collect each video and get important info #loops through all song called item
         for item in response["items"]:
-            video_title = item["snipped"]["title"]
+            video_title = item["snippet"]["title"]    # Up to here
             # plug in URL HERE (not done)
             youtube_url = "https://www.youtube.com/watch?v={}".format(
                 item["id"])
@@ -67,6 +71,8 @@ class CreatePlaylist:
 
             song_name = video["track"]
             artist = video["artist"]
+
+            # add a warning message when videos can't be processed****
 
             # save imported information
             self.all_song_info[video_title] = {
